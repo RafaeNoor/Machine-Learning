@@ -9,3 +9,5 @@ DataSet: http://www.vision.caltech.edu/Image_Datasets/Caltech101/
 
 The images are grayscaled and resized to a 32x32 square. Then a dictionary is created and saved into a pkl file.
 The network.py file loads the dictionary and uses it to train the network.
+
+Running the imageProcess.py file in the same directory as the folder containing the data set, will create the required pkl file.
