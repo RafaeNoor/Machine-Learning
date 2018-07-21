@@ -5,7 +5,7 @@ import pickle
 
 dataSet = {} # dictionary to write as pkl file 
 
-#rootDir = './'+'sample'
+
 rootDir = './'+'101_ObjectCategories'
 for dirName, subdirList, fileList in os.walk(rootDir):
     print('Found directory: %s' % os.path.basename(dirName))
@@ -53,17 +53,7 @@ def load_obj(name ):
 
 
 print("Begin saving...")
-#save_obj(dataSet,'dict')
+save_obj(dataSet,'dict')
 print("Begin reading...")
 readSet = load_obj('dict')
 print("Done reading...")
-#readSet = np.load('data.npy').item()
-
-for i in range(0,len(readSet['wild_cat'])):
-    arr = readSet['wild_cat'][i]
-    img = np.reshape(arr,(32,32))
-    cv2.imshow('image', np.array(img,dtype = np.uint8))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-
