@@ -16,7 +16,7 @@ for dirName, subdirList, fileList in os.walk(rootDir):
         
         print('\t%s' % dirName+'/'+fname)
         
-        if(not(fname == '.DS_Store')):
+        if(fname != '.DS_Store'):
             img = cv2.imread(dirName+'/'+fname,0)
             rowSize = len(img)
             colSize = len(img[0])
