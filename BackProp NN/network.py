@@ -1,13 +1,20 @@
 import numpy as np
 import cv2
 import pickle
+import random
 
 def load_obj(name):
     with open(name + '.pkl', 'rb') as f:
-        print("Loading file...")
+        print("Loading file {}.pkl ...".format(name))
         obj = pickle.load(f)
-        print("Done loading...")
+        print("Done loading...\n")
         return obj
+def save_obj(obj, name ):
+    with open(name + '.pkl', 'wb') as f:
+        print("Writing to {}.pkl".format(name))
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+        print("Done writing...")
+
 
 def sigmoid(weights, inputs):
     dotProd = weights.dot(inputs)
@@ -73,6 +80,7 @@ class NeuralNetwork:
     def printNet(self):
         for layer in self.network:
             print("{} nodes which take {} inputs".format(len(layer),layer[0].getInfo()))
+        print("")
     def feedForward(self,inputs):
         if(self.network[0][0].getInfo() != len(inputs)):
             print("ERROR: Input not of correct dimensions")
@@ -92,10 +100,8 @@ class NeuralNetwork:
     def backProp(self,inp,label,learningRate):
         for i in range(0,len(self.network)):
             j = (len(self.network)-1) - i
-            #  in the jth layer of the network
             for k in range(0,len(self.network[j])): # for the kth node
                 dW = mseCost(inp,self,j,k,label) 
-                # input, layer of nodes, layer index, node index
                 self.network[j][k].weights =  self.network[j][k].weights +np.multiply(-learningRate,dW)
     
     def measureAccuracy(self,inp,label):
@@ -105,10 +111,30 @@ class NeuralNetwork:
             return 1
         else:
             return 0
+    def saveWeights(self):
+        weightList = []
+        for layer in self.network:
+            for node in layer:
+                weightList.append(node.weights)
+        save_obj(weightList,'netWeights')
 
 
-myNet = NeuralNetwork([1024,150,102])
+    def readWeights(self, filename):
+        weightList = load_obj('netWeights')
+        for i in range(0,len(self.network)): # for each layer
+            for j in range(0,len(self.network[i])): # for each node in ith layer
+                self.network[i][j].weights = weightList.pop(0)
+        print("Done Reading Weights")
+
+
+        
+
+
+myNet = NeuralNetwork([1024,50,102])
 myNet.printNet()
+
+
+
 
 
 
@@ -117,27 +143,59 @@ dataSet.pop("101_ObjectCategories",None)
 
 #dataSet = {'cat':[np.random.uniform(0.0,1.0,1024)]}
 labelList = []
+
+trainingSet = []
 for key in dataSet:
-    print"============="
-    print " Starting key: {}".format(key)
     labelList.append(key)
     label = np.repeat(0.0,102)
     label[labelList.index(key)] = 1.0
-    hits = 0 
-    total = len(dataSet[key])
     for arr in dataSet[key]:
-        hits += myNet.measureAccuracy(arr,label)
-    print("1. For key {}, hitRate = {}%".format(key,hits*100.0/total))
+        trainingSet.append((arr,label))
 
-    for epoch in range(0,10):
-        print "Epoch: {}".format(epoch+1)
-        for arr in dataSet[key]:
-            myNet.backProp(arr,label,0.001)
-    hits = 0 
-    total = len(dataSet[key])
-    for arr in dataSet[key]:
-        hits += myNet.measureAccuracy(arr,label)
-    print("2. For key {}, hitRate = {}%".format(key,hits*100.0/total))
+random.shuffle(trainingSet)
+
+print("Output classes = {}".format(len(dataSet)))
+print("Total number of data points = {}".format(len(trainingSet))) #9145
+
+for cycle in range(0,100):
+    chunkList = []
+    pointsPerChunk = 500 
+    ls = []
+
+    for i in range(0,len(trainingSet)):
+        if(len(ls) == pointsPerChunk):
+            chunkList.append(ls)
+            ls = []
+        ls.append(trainingSet[i])
+    chunkList.append(ls)
+
+    for chunk in chunkList:
+        print ("Cycle Number: {}\n=========================================".format(cycle+1))
+        total = len(chunk)
+        hits = 0
+        for point in chunk:
+            hits += myNet.measureAccuracy(point[0],point[1])
+        print("Pre: Percentage success = {}%".format(hits*100.0/total))
+
+        for epoch in range(0,2):
+            print("Epoch: {}".format(epoch+1))
+            for point in chunk:
+                myNet.backProp(point[0],point[1],0.0005)
+        hits = 0
+        for point in chunk:
+            hits += myNet.measureAccuracy(point[0],point[1])
+        print("Post: Percentage success = {}%".format(hits*100.0/total))
+        myNet.saveWeights()
+
+
+
+
+
+
+
+
+
+
 
 
 
