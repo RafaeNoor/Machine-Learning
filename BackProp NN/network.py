@@ -130,7 +130,7 @@ class NeuralNetwork:
         
 
 
-myNet = NeuralNetwork([1024,50,102])
+myNet = NeuralNetwork([1024,150,102])
 myNet.printNet()
 
 
