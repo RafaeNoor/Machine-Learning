@@ -1,5 +1,5 @@
 import numpy as np
-import cv2
+# import cv2
 import pickle
 import random
 
@@ -51,6 +51,31 @@ def mseCost(inp,netObj,layerInd, nodeInd,label):
         netErr = np.multiply(sumArr*multArray[nodeInd]*(1.0-multArray[nodeInd]),inp)
         return netErr
     
+def crossEntropyCost(inp,netObj,layerInd,nodeInd,label):
+    (output,internals) = netObj.feedForward(inp)
+
+    if(layerInd == 1):
+        multArray = internals[layerInd]
+        scalar= (-1.0/len(output)) *(label[nodeInd]-output[nodeInd])
+        errorTerm = np.multiply(scalar,multArray)
+        return errorTerm
+    elif(layerInd == 0):
+        multArray = internals[layerInd]
+        weightArr = []
+        for i in range(0,len(output)):
+            weightArr.append(netObj.network[1][i].weights[nodeInd])
+        weightArr = np.array(weightArr)
+
+        sumTerm = np.multiply(-1.0/len(output),((label-output)*weightArr))
+        errorTerm = multArray[nodeInd]* (1.0-multArray[nodeInd])
+        errorTerm = np.multiply(errorTerm,sumTerm)
+
+        netError = errorTerm*inp
+        return netError
+
+
+
+
 
 
 class Node:
@@ -101,7 +126,8 @@ class NeuralNetwork:
         for i in range(0,len(self.network)):
             j = (len(self.network)-1) - i
             for k in range(0,len(self.network[j])): # for the kth node
-                dW = mseCost(inp,self,j,k,label) 
+                dW = crossEntropyCost(inp,self,j,k,label)
+                #  dW = mseCost(inp,self,j,k,label) 
                 self.network[j][k].weights =  self.network[j][k].weights +np.multiply(-learningRate,dW)
     
     def measureAccuracy(self,inp,label):
@@ -141,9 +167,7 @@ myNet.printNet()
 dataSet = load_obj('dict')
 dataSet.pop("101_ObjectCategories",None)
 
-#dataSet = {'cat':[np.random.uniform(0.0,1.0,1024)]}
 labelList = []
-
 trainingSet = []
 for key in dataSet:
     labelList.append(key)
@@ -157,6 +181,7 @@ random.shuffle(trainingSet)
 print("Output classes = {}".format(len(dataSet)))
 print("Total number of data points = {}".format(len(trainingSet))) #9145
 
+#myNet.readWeights('netWeights')
 for cycle in range(0,100):
     chunkList = []
     pointsPerChunk = 500 
@@ -170,21 +195,21 @@ for cycle in range(0,100):
     chunkList.append(ls)
 
     for chunk in chunkList:
-        print ("Cycle Number: {}\n=========================================".format(cycle+1))
+        print ("\nCycle Number: {}\n=========================================".format(cycle+1))
         total = len(chunk)
         hits = 0
         for point in chunk:
             hits += myNet.measureAccuracy(point[0],point[1])
-        print("Pre: Percentage success = {}%".format(hits*100.0/total))
+        print("  Pre: Percentage success = {}%".format(hits*100.0/total))
 
         for epoch in range(0,2):
-            print("Epoch: {}".format(epoch+1))
+            print("   Epoch: {}".format(epoch+1))
             for point in chunk:
                 myNet.backProp(point[0],point[1],0.0005)
         hits = 0
         for point in chunk:
             hits += myNet.measureAccuracy(point[0],point[1])
-        print("Post: Percentage success = {}%".format(hits*100.0/total))
+        print(" Post: Percentage success = {}%".format(hits*100.0/total))
         myNet.saveWeights()
 
 
