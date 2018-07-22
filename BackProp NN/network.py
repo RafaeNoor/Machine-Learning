@@ -66,7 +66,7 @@ def crossEntropyCost(inp,netObj,layerInd,nodeInd,label):
             weightArr.append(netObj.network[1][i].weights[nodeInd])
         weightArr = np.array(weightArr)
 
-        sumTerm = np.multiply(-1.0/len(output),((label-output)*weightArr))
+        sumTerm = np.sum(np.multiply(-1.0/len(output),((label-output)*weightArr)))
         errorTerm = multArray[nodeInd]* (1.0-multArray[nodeInd])
         errorTerm = np.multiply(errorTerm,sumTerm)
 
@@ -211,19 +211,3 @@ for cycle in range(0,100):
             hits += myNet.measureAccuracy(point[0],point[1])
         print(" Post: Percentage success = {}%".format(hits*100.0/total))
         myNet.saveWeights()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
