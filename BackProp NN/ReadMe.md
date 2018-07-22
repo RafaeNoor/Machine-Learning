@@ -1,3 +1,7 @@
+Unlike the mnist hand recognition dataset, this dataset performs horribly as compared. It signifies that there needs to
+be an alternative approach to training said NN. (Convolutional NN)
+
+
 Work in Progress:
 
 Defined a Node class and neural network class. Node class initiated with a a random weight vector. The 
