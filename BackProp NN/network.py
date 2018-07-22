@@ -44,6 +44,7 @@ def mseCost(inp,netObj,layerInd, nodeInd,label):
         for i in range(0,len(netObj.network[1])):
             weightArr.append(netObj.network[1][i].weights[nodeInd])
         weightArr = np.array(weightArr)
+
         ones = np.repeat(1,len(output))
         sumArr =(-2.0/len(output))*(label-output)*output*(ones-output)*weightArr 
         sumArr = np.sum(sumArr)
@@ -62,15 +63,15 @@ def crossEntropyCost(inp,netObj,layerInd,nodeInd,label):
     elif(layerInd == 0):
         multArray = internals[layerInd]
         weightArr = []
-        for i in range(0,len(output)):
+        for i in range(0,len(netObj.network[1])):
             weightArr.append(netObj.network[1][i].weights[nodeInd])
         weightArr = np.array(weightArr)
 
         sumTerm = np.sum(np.multiply(-1.0/len(output),((label-output)*weightArr)))
         errorTerm = multArray[nodeInd]* (1.0-multArray[nodeInd])
-        errorTerm = np.multiply(errorTerm,sumTerm)
+        errorTerm = errorTerm*sumTerm
 
-        netError = errorTerm*inp
+        netError = np.multiply(errorTerm,inp)
         return netError
 
 
