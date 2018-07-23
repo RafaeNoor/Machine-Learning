@@ -1,3 +1,7 @@
+NN class created to use the Mean Squared Error and Cross Entropy Error functions. The mnist handwritten 
+dataset: http://yann.lecun.com/exdb/mnist/ performs well, reaching around 90% accuracy on a 2 epoch, [28^2,30,10] configuration.
+
+
 Unlike the mnist hand recognition dataset, this dataset performs horribly as compared. It signifies that there needs to
 be an alternative approach to training said NN. (Convolutional NN)
 
