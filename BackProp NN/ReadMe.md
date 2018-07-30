@@ -2,7 +2,7 @@ NN class created to use the Mean Squared Error and Cross Entropy Error functions
 dataset: http://yann.lecun.com/exdb/mnist/ performs well, reaching around 90% accuracy on a 2 epoch, [28^2,30,10] configuration.
 
 
-Unlike the mnist hand recognition dataset, this dataset performs horribly as compared. It signifies that there needs to
+Unlike the mnist hand recognition dataset, the Caltech 101 dataset performs horribly as compared. It signifies that there needs to
 be an alternative approach to training said NN. (Convolutional NN)
 
 
@@ -14,7 +14,9 @@ Network is defined by an array consisting of the number of nodes per layer. e.g.
 Uses the Mean squared error loss function to tend towards Minima. It's likely I will switch to the Cross entropy Error
 function to prevent stalling.
 
-DataSet: http://www.vision.caltech.edu/Image_Datasets/Caltech101/
+DataSets: 
+http://yann.lecun.com/exdb/mnist/
+http://www.vision.caltech.edu/Image_Datasets/Caltech101/
 
 The images are grayscaled and resized to a 32x32 square. Then a dictionary is created and saved into a pkl file.
 The network.py file loads the dictionary and uses it to train the network.
