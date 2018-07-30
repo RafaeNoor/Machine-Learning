@@ -15,7 +15,7 @@ Uses the Mean squared error loss function to tend towards Minima. It's likely I 
 function to prevent stalling.
 
 DataSets: 
-http://yann.lecun.com/exdb/mnist/
+http://yann.lecun.com/exdb/mnist/,
 http://www.vision.caltech.edu/Image_Datasets/Caltech101/
 
 The images are grayscaled and resized to a 32x32 square. Then a dictionary is created and saved into a pkl file.
